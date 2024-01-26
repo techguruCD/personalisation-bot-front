@@ -1,25 +1,25 @@
-import logo from './logo.svg';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { PaperAirplaneIcon } from '@heroicons/react/24/solid'
 import './App.css';
+import HeroImage from './assets/images/hero.png'
+import Withnavbar from './layouts/WithNavbar';
+import NormalRoute from './components/routeHelper/NormalRoute';
+import HomePage from './pages/HomePage';
+import DownloadPage from './pages/DownloadPage';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <>
+      <Router>
+        <Routes>
+          <Route path='/' element={<Withnavbar />}>
+            <Route exact path='/' element={<NormalRoute><HomePage /></NormalRoute>} />
+            <Route exact path='/download' element={<NormalRoute><DownloadPage /></NormalRoute>} />
+          </Route>
+        </Routes>
+      </Router>
+    </>
+  )
 }
 
 export default App;
