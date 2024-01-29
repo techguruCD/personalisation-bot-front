@@ -8,8 +8,13 @@ export default function Navbar() {
         <Link className='md:text-4xl cursor-pointer' to='/'>
           <span className='font-bold'>The New Widgets</span> 2000
         </Link>
-        <div className='border border-white rounded-md px-4 py-2 cursor-pointer'>
-          Find Out More
+        <div className='flex gap-4 items-center'>
+          <div className='border border-white rounded-md px-4 py-2 cursor-pointer h-fit'>
+            Find Out More
+          </div>
+          <Link to='/admin/home' className='border border-white rounded-md px-4 py-2 cursor-pointer h-fit'>
+            Members
+          </Link>
         </div>
       </div>
     </div>

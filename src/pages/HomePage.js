@@ -1,6 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { PaperAirplaneIcon } from '@heroicons/react/24/solid'
 import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import axios from 'axios'
+import { setSetting } from '../store/appSlice'
 
 export default function HomePage() {
   return (
