@@ -31,3 +31,35 @@ code {
     max-width: 1200px;
   }
 }
+
+
+.ck.ck-editor {
+  width: 100%!important;
+  min-width: 300px;
+}
+
+.ck h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.ck h3 {
+  font-size: 1.17em;
+  font-weight: bold;
+}
+
+.ck h4 {
+  font-weight: bold;
+}
+
+.ck.ck-balloon-panel_visible.ck-powered-by-balloon {
+  display: none!important;
+}
+
+.ck.ck-dropdown__panel-visible {
+  z-index: 100;
+}
+
+.ck.ck-content {
+  min-height: 300px;
+}

@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 export const appSlice = createSlice({
   name: 'app',
   initialState: {
-    setting: null,
+    homeSetting: null,
     user: null,
     token: null,
     loading: false,
@@ -18,8 +18,8 @@ export const appSlice = createSlice({
         state.token = action.payload
       else state.token = null
     },
-    setSetting: (state, action) => {
-      state.setting = action.payload
+    setHomeSetting: (state, action) => {
+      state.homeSetting = action.payload
     },
     setLoading: (state, action) => {
       state.loading = action.payload
@@ -28,6 +28,6 @@ export const appSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setUser, setToken, setSetting, setLoading } = appSlice.actions
+export const { setUser, setToken, setHomeSetting, setLoading } = appSlice.actions
 
 export default appSlice.reducer

@@ -1,10 +1,12 @@
 import React from 'react'
 
 import BrochureImage from '../assets/images/brochure.png'
+import Hero from '../components/Hero'
 
 export default function DownloadPage() {
   return (
     <>
+      <Hero />
       <div className='w-full py-12 px-6'>
         <div className='container mx-auto space-y-12'>
           <div className='text-center text-4xl text-[#454545]'>

@@ -2,14 +2,18 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Withnavbar from './layouts/WithNavbar';
 import NormalRoute from './components/routeHelper/NormalRoute';
+import PublicRoute from './components/routeHelper/PublicRoute'
 import HomePage from './pages/HomePage';
 import DownloadPage from './pages/DownloadPage';
 
 import setAuthToken from './utils/setAuthToken'
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { setSetting, setUser } from './store/appSlice';
+import { setHomeSetting, setUser } from './store/appSlice';
 import axios from 'axios';
+import LoginPage from './pages/LoginPage';
+import { Toaster } from 'react-hot-toast';
+import FindOutMorePage from './pages/FindOutMorePage';
 
 if (localStorage.token) {
   setAuthToken(localStorage.token)
@@ -34,21 +38,22 @@ function App() {
     });
     (async function() {
       try {
-        const {data: response} = await axios.get(process.env.REACT_APP_API_URL + '/api/home')
-        dispatch(setSetting(response.setting))
+        const {data: response} = await axios.get(process.env.REACT_APP_API_URL + '/api/homeSetting')
+        dispatch(setHomeSetting(response.homeSetting))
       } catch (err) { }
     })()
-  })
+  }, [])
+
   return (
     <>
       <Router>
+        <Toaster position='top-center' reverseOrder={false} />
         <Routes>
           <Route path='/' element={<Withnavbar />}>
             <Route exact path='/' element={<NormalRoute><HomePage /></NormalRoute>} />
             <Route exact path='/download' element={<NormalRoute><DownloadPage /></NormalRoute>} />
-          </Route>
-          <Route path='/admin' element={<Withnavbar />}>
-
+            <Route exact path='/find-out-more' element={<NormalRoute><FindOutMorePage /></NormalRoute>} />
+            <Route exact path='/login' element={<PublicRoute><LoginPage /></PublicRoute>} />
           </Route>
         </Routes>
       </Router>

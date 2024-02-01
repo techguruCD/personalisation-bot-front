@@ -2,14 +2,12 @@ import { Outlet } from "react-router-dom"
 import React from 'react'
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
-import Hero from "../components/Hero"
 export default function Withnavbar() {
   return (
-    <>
-      <Navbar />
-      <Hero />
+    <div className="flex flex-col flex-auto h-screen overflow-y-auto snap-y snap-mandatory">
+      <Navbar className='snap-start md:snap-align-none'/>
       <Outlet />
-      <Footer />
-    </>
+      <Footer className='snap-end md:snap-align-none'/>
+    </div>
   )
 }
