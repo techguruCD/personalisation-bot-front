@@ -7,11 +7,13 @@ export const appSlice = createSlice({
     user: null,
     token: null,
     loading: false,
+    isAdmin: false
   },
   reducers: {
     setUser: (state, action) => {
       state.user = action.payload;
       state.profile = action.payload?.profile || null
+      state.isAdmin = action.payload?.role === 'ADMIN'
     },
     setToken: (state, action) => {
       if (action.payload)
@@ -19,12 +21,19 @@ export const appSlice = createSlice({
       else state.token = null
     },
     setHomeSetting: (state, action) => {
-      state.homeSetting = action.payload
+      if (state.homeSetting) {
+        state.homeSetting = {
+          ...state.homeSetting,
+          ...action.payload
+        }
+      } else {
+        state.homeSetting = action.payload
+      }
     },
     setLoading: (state, action) => {
       state.loading = action.payload
     }
-  },
+  }
 })
 
 // Action creators are generated for each case reducer function

@@ -1,19 +1,28 @@
-import React, { useEffect, useRef, useLayoutEffect } from 'react'
+import React, { useEffect, useRef, useLayoutEffect, useState } from 'react'
 import { PaperAirplaneIcon } from '@heroicons/react/24/solid'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import { setSetting } from '../store/appSlice'
 import Hero from '../components/Hero'
+import updateHomeSetting from '../utils/updateHomeSetting'
+import { CheckIcon, PencilIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import HomeSettingEdit from '../components/HomeSettingEditor'
 
 export default function HomePage() {
+  const [windowsWidth, setWindowsWidth] = useState(window.innerWidth)
+
+  useLayoutEffect(() => {
+    function updateSize() {
+      setWindowsWidth(window.innerWidth)
+    }
+    window.addEventListener('resize', updateSize)
+    return () => window.removeEventListener('resize', updateSize)
+  }, [])
+
   const chatComponent = <div className='md:col-span-1 space-y-6 text-center md:text-start'>
-    <div className='text-[#ee484d] text-[40pt] font-bold hidden md:block'>
-      Widget Questions?
-    </div>
-    <div className='text-[#454545] text-4xl'>
-      Chat to Our Bot!
-    </div>
+    <HomeSettingEdit containerClassName='hidden md:block' contentClassName='text-[40pt] font-bold' color='[#ee484d]' valueKey='chatbotTitle' />
+    <HomeSettingEdit contentClassName='text-4xl font-bold' color='[#454545]' valueKey='chatbotSubTitle' />
     <div className='rounded-xl w-full h-[70%] md:h-[800px] shadow-2xl shadow-gray-400 flex flex-col flex-auto shrink-0'>
       <div className='h-full overflow-auto p-6 space-y-4'>
         <div className='max-w-[90%] flex gap-6 mr-auto'>
@@ -53,41 +62,43 @@ export default function HomePage() {
   </div>
 
   const segmentComponent = <div className='md:col-span-1 space-y-6 xl:pl-32'>
-    <div className='text-[#ee484d] text-[40pt] font-bold text-center md:text-start hidden md:block'>
-      Behind the Scenes
-    </div>
-    <div className='text-[#454545] text-4xl text-center md:text-start'>
-      Real Time Segmentation
-    </div>
+    <HomeSettingEdit containerClassName='hidden md:block' contentClassName='text-[40pt] font-bold text-center' color='[#ee484d]' valueKey='segmentTitle' />
+    <HomeSettingEdit contentClassName='text-4xl text-center md:text-start' color='[#454545]' valueKey='segmentSubTitle' />
     <div className='border-t space-y-12 pt-10'>
       <div className='flex items-center gap-4'>
-        <div className='text-[#ee484d] text-2xl font-bold min-w-[120px]'>
-          Segment
-        </div>
+        <HomeSettingEdit containerClassName='min-w-[120px]' contentClassName='text-2xl font-bold min-w-[120px]' color='[#ee484d]' valueKey='segmentLabel1' />
+        {/* <div className='min-w-[120px]'>
+          <div className='text-[#ee484d] text-2xl font-bold'>
+            Segment
+          </div>
+        </div> */}
         <div className='text-[#454545] text-2xl lg:text-3xl border-l px-4' style={{ overflowWrap: 'anywhere' }}>
           Opportunistic Adventurer
         </div>
       </div>
       <div className='flex items-center gap-4'>
-        <div className='text-[#ee484d] text-2xl font-bold min-w-[120px]'>
+        <HomeSettingEdit containerClassName='min-w-[120px]' contentClassName='text-2xl font-bold min-w-[120px]' color='[#ee484d]' valueKey='segmentLabel2' />
+        {/* <div className='text-[#ee484d] text-2xl font-bold min-w-[120px]'>
           Chance%
-        </div>
+        </div> */}
         <div className='text-[#454545] text-4xl border-l px-4'>
           75%
         </div>
       </div>
       <div className='flex items-center gap-4'>
-        <div className='text-[#ee484d] text-2xl font-bold min-w-[120px]'>
+        <HomeSettingEdit containerClassName='min-w-[120px]' contentClassName='text-2xl font-bold min-w-[120px]' color='[#ee484d]' valueKey='segmentLabel3' />
+        {/* <div className='text-[#ee484d] text-2xl font-bold min-w-[120px]'>
           Rationale
-        </div>
+        </div> */}
         <div className='text-[#454545] border-l px-4'>
           This user is asking highly detailed questions and using direct communication in his messages indicating he is an opportunistic adventurer.
         </div>
       </div>
       <div className='flex items-center gap-4'>
-        <div className='text-[#ee484d] text-2xl font-bold min-w-[120px]'>
+        <HomeSettingEdit containerClassName='min-w-[120px]' contentClassName='text-2xl font-bold min-w-[120px]' color='[#ee484d]' valueKey='segmentLabel4' />
+        {/* <div className='text-[#ee484d] text-2xl font-bold min-w-[120px]'>
           Brochure
-        </div>
+        </div> */}
         <div className='text-[#454545] text-4xl border-l px-4'>
           1
         </div>
@@ -97,19 +108,27 @@ export default function HomePage() {
 
   return (
     <>
-      <Hero className='snap-start md:snap-align-none' />
-      <div className='w-full py-6 px-6 hidden md:block'>
-        <div className='container mx-auto space-y-24 md:grid md:grid-cols-2 md:gap-24'>
-          {chatComponent}
-          {segmentComponent}
+      <Hero className='snap-end md:snap-align-none' />
+      {
+        windowsWidth > 768 &&
+        <div className='w-full py-6 px-6 hidden md:block'>
+          <div className='container mx-auto space-y-24 md:space-y-0 md:grid md:grid-cols-2 md:gap-24'>
+            {chatComponent}
+            {segmentComponent}
+          </div>
         </div>
-      </div>
-      <div className='container mx-auto px-6 md:hidden snap-start md:snap-align-none'>
-        {chatComponent}
-      </div>
-      <div className='container mx-auto px-6 md:hidden snap-start md:snap-align-none'>
-        {segmentComponent}
-      </div>
+      }
+      {
+        windowsWidth <= 768 &&
+        <>
+          <div className='container mx-auto px-6 md:hidden snap-start md:snap-align-none'>
+            {chatComponent}
+          </div>
+          <div className='container mx-auto px-6 md:hidden snap-start md:snap-align-none'>
+            {segmentComponent}
+          </div>
+        </>
+      }
       <div className='mt-32 text-center'>
         <Link className='text-white bg-[#ee484d] py-4 px-6 rounded-md font-bold cursor-pointer' to='/download'>
           DOWNLOAD BROCHURE
