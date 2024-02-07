@@ -63,3 +63,40 @@ code {
 .ck.ck-content {
   min-height: 300px;
 }
+
+.typing {
+  align-items: center;
+  display: flex;
+  height: 17px;
+}
+
+.typing .dot {
+  animation: mercuryTypingAnimation 1.8s infinite ease-in-out;
+  background-color: #737373;
+  border-radius: 50%;
+  height: 9px;
+  margin-right: 5px;
+  vertical-align: middle;
+  width: 9px;
+  display: inline-block;
+}
+
+.typing .dot:last-child {
+  margin-right: 0;
+}
+
+.typing .dot:nth-child(1) {
+  animation-delay: 200ms;
+}
+
+.typing .dot:nth-child(2) {
+  animation-delay: 300ms;
+}
+
+.typing .dot:nth-child(3) {
+  animation-delay: 400ms;
+}
+
+.typing .dot:last-child {
+  margin-right: 0;
+}

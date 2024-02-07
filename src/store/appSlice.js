@@ -7,7 +7,9 @@ export const appSlice = createSlice({
     user: null,
     token: null,
     loading: false,
-    isAdmin: false
+    isAdmin: false,
+    segment: null,
+    messages: []
   },
   reducers: {
     setUser: (state, action) => {
@@ -18,7 +20,10 @@ export const appSlice = createSlice({
     setToken: (state, action) => {
       if (action.payload)
         state.token = action.payload
-      else state.token = null
+      else {
+        state.token = null;
+        state.user = null;
+      }
     },
     setHomeSetting: (state, action) => {
       if (state.homeSetting) {
@@ -30,6 +35,21 @@ export const appSlice = createSlice({
         state.homeSetting = action.payload
       }
     },
+    setSegment: (state, action) => {
+      state.segment = action.payload
+    },
+    setMessages: (state, action) => {
+      state.messages = action.payload
+    },
+    addMessage: (state, action) => {
+      state.messages = [
+        ...state.messages,
+        action.payload
+      ]
+    },
+    shiftMessage: (state, action) => {
+      state.messages = state.messages.slice(0, state.messages.length - 1)
+    },
     setLoading: (state, action) => {
       state.loading = action.payload
     }
@@ -37,6 +57,6 @@ export const appSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setUser, setToken, setHomeSetting, setLoading } = appSlice.actions
+export const { setUser, setToken, setHomeSetting, setSegment, setLoading, setMessages, addMessage, shiftMessage } = appSlice.actions
 
 export default appSlice.reducer

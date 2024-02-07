@@ -9,8 +9,8 @@ export default async function updateHomeSetting (key, ref, setEdit) {
       const {data: response} = await axios.post(process.env.REACT_APP_API_URL + '/api/admin/update-homeSetting', {
         key, value: ref.current.innerHTML
       })
-      setEdit(false)
       store.dispatch(setHomeSetting({[key]: ref.current.innerHTML}))
+      setEdit(false)
       showToaster(response?.message)
     } catch (err) {
       showToaster(err?.response?.data?.message || {error: 'Please try again later'})

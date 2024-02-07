@@ -14,6 +14,9 @@ import axios from 'axios';
 import LoginPage from './pages/LoginPage';
 import { Toaster } from 'react-hot-toast';
 import FindOutMorePage from './pages/FindOutMorePage';
+import ChatbotSettingPage from './pages/ChatbotSettingPage';
+import AdminRoute from './components/routeHelper/AdminRoute';
+import ChatBot from './components/ChatBot';
 
 if (localStorage.token) {
   setAuthToken(localStorage.token)
@@ -52,11 +55,13 @@ function App() {
           <Route path='/' element={<Withnavbar />}>
             <Route exact path='/' element={<NormalRoute><HomePage /></NormalRoute>} />
             <Route exact path='/download' element={<NormalRoute><DownloadPage /></NormalRoute>} />
+            <Route exact path='/setting' element={<AdminRoute><ChatbotSettingPage /></AdminRoute>} />
             <Route exact path='/find-out-more' element={<NormalRoute><FindOutMorePage /></NormalRoute>} />
             <Route exact path='/login' element={<PublicRoute><LoginPage /></PublicRoute>} />
           </Route>
         </Routes>
       </Router>
+      <ChatBot />
       {loading &&
         <div className='fixed inset-0 z-50' style={{ backdropFilter: 'blur(5px)' }}>
           <div className='flex w-full h-full justify-center items-center'>

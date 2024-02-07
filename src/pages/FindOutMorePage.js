@@ -37,7 +37,7 @@ export default function FindOutMorePage() {
   }, [])
   return (
     <>
-      <div className='w-full h-full py-6 px-6'>
+      <div className='w-full grow py-6 px-6'>
         <div className='container mx-auto space-y-6'>
           {
             !isAuthenticated &&
