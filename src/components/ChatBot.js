@@ -5,7 +5,7 @@ import { cn } from '../utils';
 import axios from 'axios';
 import showToaster from '../utils/showToaster';
 import { useDispatch, useSelector } from 'react-redux';
-import { setHomeSetting } from '../store/appSlice';
+import { setHomeSetting, setSitewidebotIndex } from '../store/appSlice';
 
 function Message({
   text,
@@ -37,6 +37,7 @@ function Message({
 
 export default function ChatBot() {
   const dispatch = useDispatch()
+  const sitewidebotIndex = useSelector(state => state.app.sitewidebotIndex)
   const homeSetting = useSelector(state => state.app.homeSetting)
 
   const [messages, setMessages] = useState([])
@@ -65,9 +66,9 @@ export default function ChatBot() {
     if (typing) return;
     let greeting = homeSetting?.sitebotGreeting
     try {
-      const { data: response } = await axios.get(process.env.REACT_APP_API_URL + '/api/homeSetting')
-      dispatch(setHomeSetting(response.homeSetting))
-      greeting = response.homeSetting.sitebotGreeting
+      const {data: response }  = await axios.get(process.env.REACT_APP_API_URL + '/api/init-sitewidebot')
+      greeting = response.sitebotGreeting;
+      dispatch(setSitewidebotIndex(response.index))
     } catch (err) { }
     setMessages([
       { role: 'assistant', content: greeting }
@@ -92,6 +93,7 @@ export default function ChatBot() {
       .then(({ data: response }) => {
         setMessages([...messages, { role: 'user', content }, { role: 'assistant', content: response.content }])
         setTimeout(scrollToBottom, 100)
+        axios.post(process.env.REACT_APP_API_URL + '/api/widgetbot-history', {chatbotIndex: sitewidebotIndex, question: content, answer: response.content, type:'sitewidebot'}).then(() => {}).catch(() => {})
       }).catch(err => {
         setMessages([...messages])
         showToaster(err?.response?.data?.message)
@@ -106,14 +108,17 @@ export default function ChatBot() {
 
   return (
     <>
-      <div className='fixed bottom-20 right-4 z-[100]'>
+      <div className='fixed top-36 right-4 z-[100]'>
         <div className={'fixed inset-0 flex flex-col flex-auto shrink-0 sm:relative sm:w-[420px] sm:h-[620px] sm:max-h-[80vh] shadow-md border rounded-md border-gray-200 bg-white ' + (isOpened ? '' : 'hidden')}>
-          <div className='flex gap-3 justify-end border-b pb-4 m-4 mb-0'>
-            <div className='w-5 cursor-pointer' onClick={init}>
-              <ArrowPathIcon />
-            </div>
-            <div className='w-5 cursor-pointer' onClick={() => setIsOpened(false)}>
-              <XMarkIcon />
+          <div className='flex justify-between border-b pb-4 m-4 mb-0'>
+            <label className='font-bold'>PersonalisationGTP Site Chatbot</label>
+            <div className='flex gap-3'>
+              <div className='w-5 cursor-pointer' onClick={init}>
+                <ArrowPathIcon />
+              </div>
+              <div className='w-5 cursor-pointer md:hidden' onClick={() => setIsOpened(false)}>
+                <XMarkIcon />
+              </div>
             </div>
           </div>
           <div className='p-4 py-0 h-full flex flex-col overflow-auto'>
@@ -145,14 +150,16 @@ export default function ChatBot() {
         </div>
 
       </div>
-      <div className='border border-gray fixed bottom-4 right-4 z-[99] w-12 p-3 rounded-full bg-[#ee484d] cursor-pointer hover:scale-110 transition-all duration-200 ml-auto text-white' onClick={() => setIsOpened(!isOpened)}>
+      <div className='min-w-[60px] min-h-[60px] max-h-[60px] flex justify-center items-center fixed top-20 right-4 z-[99] rounded-full bg-blue-600 cursor-pointer hover:scale-110 transition-all duration-200 ml-auto text-white' onClick={() => setIsOpened(!isOpened)}>
         {
           isOpened &&
-          <XMarkIcon />
+          <div className='w-8'>
+            <XMarkIcon />
+          </div>
         }
         {
-          !isOpened &&
-          <ChatBubbleLeftIcon />
+          !isOpened && <div className='font-bold text-lg'>SITE</div>
+          // <ChatBubbleLeftIcon />
         }
       </div>
     </>

@@ -34,7 +34,7 @@ export default function Hero({
           <HomeSettingEdit contentClassName='text-4xl font-bold' color='[#454545]' valueKey='subTitle' />
           <HomeSettingEdit contentClassName='text-xl' color='[#454545]' valueKey='text' />
           <div className='text-white bg-[#ee484d] w-fit py-4 px-6 rounded-md font-bold mx-auto md:ml-0 cursor-pointer' onClick={onDownload}>
-            DOWNLOAD
+            DOWNLOAD BROCHURE
           </div>
         </div>
         <div className='md:col-span-1 my-auto'>

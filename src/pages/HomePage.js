@@ -3,7 +3,7 @@ import { PaperAirplaneIcon } from '@heroicons/react/24/solid'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
-import { addMessage, setMessages, setSegment, setSetting, shiftMessage } from '../store/appSlice'
+import { addMessage, setMessages, setSegment, setSetting, setWidgetbotIndex, shiftMessage } from '../store/appSlice'
 import Hero from '../components/Hero'
 import updateHomeSetting from '../utils/updateHomeSetting'
 import { CheckIcon, PencilIcon, XMarkIcon } from '@heroicons/react/24/outline'
@@ -17,8 +17,8 @@ function Message({
   const isLeft = useMemo(() => message?.role === 'assistant' || typing)
   return (
     <>
-      <div className={`max-w-[90%] flex gap-6 ${isLeft ? 'mr-auto' : 'ml-auto flex-row-reverse'}`}>
-        <div className={`min-w-[60px] min-h-[60px] max-h-[60px] text-center rounded-full flex items-center justify-center ${isLeft ? 'bg-[#ee484d]' : 'bg-[#fcce3d]'}`}>
+      <div className={`max-w-[90%] flex flex-col items-center md:items-start md:flex-row gap-6 mx-auto ${isLeft ? 'md:mr-auto' : 'md:ml-auto md:flex-row-reverse'}`}>
+        <div className={`min-w-[60px] max-w-[60px] min-h-[60px] max-h-[60px] text-center rounded-full flex items-center justify-center ${isLeft ? 'bg-[#ee484d]' : 'bg-[#fcce3d]'}`}>
           <div className={`font-bold ${isLeft ? 'text-white' : 'text-[#454545]'}`}>{isLeft ? 'WB' : 'You'}</div>
         </div>
         <div className='space-y-4'>
@@ -51,6 +51,7 @@ function Message({
 export default function HomePage() {
 
   const dispatch = useDispatch()
+  const widgetbotIndex = useSelector(state => state.app.widgetbotIndex)
   const segment = useSelector(state => state.app.segment)
   const [windowsWidth, setWindowsWidth] = useState(window.innerWidth)
   const homeSetting = useSelector(state => state.app.homeSetting)
@@ -75,23 +76,34 @@ export default function HomePage() {
     setTimeout(scrollToBottom, 100)
     setPayload('')
     setTyping(true)
-    axios.post(process.env.REACT_APP_API_URL + '/api/sendMessage', { messages: [...messages.slice(messages.length - 10), { role: 'user', content }] })
-      .then(({ data: response }) => {
-        dispatch(addMessage({ role: 'assistant', content: response.content }))
-        setTimeout(scrollToBottom, 100)
-      }).catch(err => {
-        dispatch(shiftMessage())
-        showToaster(err?.response?.data?.message)
-      }).finally(() => {
-        setTyping(false)
-      })
-    axios.post(process.env.REACT_APP_API_URL + '/api/detect-segment', { messages: [...messages.slice(messages.length - 10), { role: 'user', content }] })
-      .then(({ data: response }) => {
-        dispatch(setSegment(response.segment))
-      }).catch(err => {
-      }).finally(() => {
-
-      })
+    let promiseArray = []
+    promiseArray.push(new Promise((resolve, reject) => {
+      axios.post(process.env.REACT_APP_API_URL + '/api/sendMessage', { messages: [...messages.slice(messages.length - 10), { role: 'user', content }] })
+        .then(({ data: response }) => {
+          dispatch(addMessage({ role: 'assistant', content: response.content }))
+          setTimeout(scrollToBottom, 100)
+          resolve({ question: content, answer: response.content })
+        }).catch(err => {
+          dispatch(shiftMessage())
+          showToaster(err?.response?.data?.message)
+          reject()
+        }).finally(() => {
+          setTyping(false)
+        })
+    }))
+    promiseArray.push(new Promise((resolve, reject) => {
+      axios.post(process.env.REACT_APP_API_URL + '/api/detect-segment', { messages: [...messages.slice(messages.length - 10), { role: 'user', content }] })
+        .then(({ data: response }) => {
+          dispatch(setSegment(response.segment))
+          resolve(response.segment)
+        }).catch(err => {
+          reject()
+        })
+    }))
+    Promise.all(promiseArray)
+      .then(([{ question, answer }, segment]) => {
+        axios.post(process.env.REACT_APP_API_URL + '/api/widgetbot-history', { chatbotIndex: widgetbotIndex, question, answer, segment, type: 'widgetbot' }).then(() => { }).catch(() => { })
+      }).catch(err => { })
   }
 
   const handleKeyDown = (e) => {
@@ -114,12 +126,12 @@ export default function HomePage() {
     function updateSize() {
       setWindowsWidth(window.innerWidth)
     }
-    window.addEventListener('resize', updateSize)
+    window.addEventListener('resize', updateSize);
     setTimeout(() => {
       if (windowsWidth < 768) {
         chatBoxRef.current.scrollIntoView()
       }
-    }, 1)
+    }, 1);
     return () => window.removeEventListener('resize', updateSize)
   }, [])
 
@@ -195,7 +207,7 @@ export default function HomePage() {
       {
         windowsWidth <= 768 &&
         <>
-          <div className='container mx-auto px-6 md:hidden snap-start md:snap-align-none'>
+          <div className='container mx-auto md:hidden snap-start md:snap-align-none'>
             {chatComponent}
           </div>
           <div className='container mx-auto px-6 md:hidden snap-start md:snap-align-none'>

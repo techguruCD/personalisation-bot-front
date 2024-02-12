@@ -76,7 +76,7 @@ function Brochure({ brochure, onUpdated }) {
   )
 }
 
-function BotFiles() {
+function BotFiles({ type, title }) {
   const dispatch = useDispatch()
 
   const fileInputRef = useRef(null)
@@ -92,7 +92,7 @@ function BotFiles() {
     try {
       const { data: response } = await axios.get(process.env.REACT_APP_API_URL + '/api/admin/bot-files', {
         params: {
-          page, pageSize
+          page, pageSize, type
         }
       })
       setbotFiles(response.botFiles)
@@ -118,7 +118,8 @@ function BotFiles() {
   async function fileUpload(fileData) {
     try {
       const { data: response } = await axios.post(process.env.REACT_APP_API_URL + '/api/admin/bot-file-upload', {
-        ...fileData
+        ...fileData,
+        type
       })
       showToaster(response.message)
       loadPage(page)
@@ -147,7 +148,7 @@ function BotFiles() {
     <div className='w-full space-y-6 text-[#454545]'>
       <input type='file' onChange={onFileChange} ref={fileInputRef} hidden />
       <div className='flex gap-6'>
-        <label className='text-xl font-bold'>Sitebot Files</label>
+        <label className='text-xl font-bold'>{title}</label>
         <div className='w-6 cursor-pointer'><DocumentPlusIcon onClick={() => { fileInputRef.current.click(); }} /></div>
       </div>
       <div className='w-full space-y-4 px-6'>
@@ -266,28 +267,49 @@ export default function ChatbotSettingPage() {
   return (
     <div className='w-full grow p-6'>
       <div className='container mx-auto space-y-12 mt-12'>
-        <SettingEdit valueKey='greeting' title='Chatbot Greeting' />
-        <hr />
-        <SettingEdit valueKey='prompt' title='Chatbot Prompt' />
-        <hr />
-        <SettingEdit valueKey='widgetPrompt' title='Widget Prompt' />
-        <hr />
-        <div className='w-full space-y-4'>
-          <label className='text-xl font-bold'>
-            Brochures
-          </label>
-          <div className='w-full space-y-4 px-6'>
-            {
-              brochures.map((brochure, index) => <Brochure brochure={brochure} key={index} onUpdated={onBrochureUpdated} />)
-            }
+        <div className='space-y-4'>
+          <div className='text-2xl font-bold'>Widget Chatbot</div>
+          <div className='border p-4 rounded-xl space-y-4'>
+            <SettingEdit valueKey='greeting' title='Greeting' />
+            <hr />
+            <SettingEdit valueKey='prompt' title='Prompt' />
+            <hr />
+            <BotFiles type='widgetbot' title='Files' />
           </div>
         </div>
-        <hr />
-        <SettingEdit valueKey='sitebotGreeting' title='Sitebot Greeting' />
-        <hr />
-        <SettingEdit valueKey='sitebotPrompt' title='Sitebot Prompt' />
-        <hr />
-        <BotFiles />
+        <div>
+          <div className='space-y-4'>
+            <div className='text-2xl font-bold'>Segment Detection</div>
+            <div className='border p-4 rounded-xl space-y-4'>
+              <SettingEdit valueKey='widgetPrompt' title='Prompt' />
+              <hr />
+              <BotFiles title='Files' type='detectionbot' />
+              <hr />
+              <div className='w-full space-y-4'>
+                <label className='text-xl font-bold'>
+                  Brochures
+                </label>
+                <div className='w-full space-y-4 px-6'>
+                  {
+                    brochures.map((brochure, index) => <Brochure brochure={brochure} key={index} onUpdated={onBrochureUpdated} />)
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div className='space-y-4'>
+            <div className='text-2xl font-bold'>PersonalisationGPT Site Chatbot</div>
+            <div className='border p-4 rounded-xl space-y-4'>
+              <SettingEdit valueKey='sitebotGreeting' title='Greeting' />
+              <hr />
+              <SettingEdit valueKey='sitebotPrompt' title='Prompt' />
+              <hr />
+              <BotFiles title='Files' type='sitewidebot' />
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>

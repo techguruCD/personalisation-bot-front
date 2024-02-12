@@ -9,7 +9,7 @@ import DownloadPage from './pages/DownloadPage';
 import setAuthToken from './utils/setAuthToken'
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { setHomeSetting, setUser } from './store/appSlice';
+import { setHomeSetting, setUser, setWidgetbotIndex } from './store/appSlice';
 import axios from 'axios';
 import LoginPage from './pages/LoginPage';
 import { Toaster } from 'react-hot-toast';
@@ -17,6 +17,7 @@ import FindOutMorePage from './pages/FindOutMorePage';
 import ChatbotSettingPage from './pages/ChatbotSettingPage';
 import AdminRoute from './components/routeHelper/AdminRoute';
 import ChatBot from './components/ChatBot';
+import HistoryPage from './pages/HistoryPage';
 
 if (localStorage.token) {
   setAuthToken(localStorage.token)
@@ -44,6 +45,13 @@ function App() {
         const {data: response} = await axios.get(process.env.REACT_APP_API_URL + '/api/homeSetting')
         dispatch(setHomeSetting(response.homeSetting))
       } catch (err) { }
+    })();
+
+    (async () => {
+      try {
+        const { data: response } = await axios.get(process.env.REACT_APP_API_URL + '/api/init-widgetbot')
+        dispatch(setWidgetbotIndex(response.index))
+      } catch (err) { }
     })()
   }, [])
 
@@ -55,6 +63,7 @@ function App() {
           <Route path='/' element={<Withnavbar />}>
             <Route exact path='/' element={<NormalRoute><HomePage /></NormalRoute>} />
             <Route exact path='/download' element={<NormalRoute><DownloadPage /></NormalRoute>} />
+            <Route exact path='/history' element={<AdminRoute><HistoryPage /></AdminRoute>} />
             <Route exact path='/setting' element={<AdminRoute><ChatbotSettingPage /></AdminRoute>} />
             <Route exact path='/find-out-more' element={<NormalRoute><FindOutMorePage /></NormalRoute>} />
             <Route exact path='/login' element={<PublicRoute><LoginPage /></PublicRoute>} />

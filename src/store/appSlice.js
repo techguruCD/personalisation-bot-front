@@ -9,7 +9,9 @@ export const appSlice = createSlice({
     loading: false,
     isAdmin: false,
     segment: null,
-    messages: []
+    messages: [],
+    widgetbotIndex: 0,
+    sitewidebotIndex: 0
   },
   reducers: {
     setUser: (state, action) => {
@@ -50,6 +52,12 @@ export const appSlice = createSlice({
     shiftMessage: (state, action) => {
       state.messages = state.messages.slice(0, state.messages.length - 1)
     },
+    setWidgetbotIndex: (state, action) => {
+      state.widgetbotIndex = action.payload
+    },
+    setSitewidebotIndex: (state, action) => {
+      state.sitewidebotIndex = action.payload
+    },
     setLoading: (state, action) => {
       state.loading = action.payload
     }
@@ -57,6 +65,6 @@ export const appSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setUser, setToken, setHomeSetting, setSegment, setLoading, setMessages, addMessage, shiftMessage } = appSlice.actions
+export const { setUser, setToken, setHomeSetting, setSegment, setLoading, setMessages, addMessage, shiftMessage, setWidgetbotIndex, setSitewidebotIndex } = appSlice.actions
 
 export default appSlice.reducer
