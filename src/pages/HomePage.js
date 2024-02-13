@@ -77,8 +77,9 @@ export default function HomePage() {
     setPayload('')
     setTyping(true)
     let promiseArray = []
+    const sendingMessages = [...messages, { role: 'user', content }].slice(-20)
     promiseArray.push(new Promise((resolve, reject) => {
-      axios.post(process.env.REACT_APP_API_URL + '/api/sendMessage', { messages: [...messages.slice(messages.length - 10), { role: 'user', content }] })
+      axios.post(process.env.REACT_APP_API_URL + '/api/sendMessage', { messages: sendingMessages })
         .then(({ data: response }) => {
           dispatch(addMessage({ role: 'assistant', content: response.content }))
           setTimeout(scrollToBottom, 100)
@@ -92,7 +93,7 @@ export default function HomePage() {
         })
     }))
     promiseArray.push(new Promise((resolve, reject) => {
-      axios.post(process.env.REACT_APP_API_URL + '/api/detect-segment', { messages: [...messages.slice(messages.length - 10), { role: 'user', content }] })
+      axios.post(process.env.REACT_APP_API_URL + '/api/detect-segment', { messages: sendingMessages })
         .then(({ data: response }) => {
           dispatch(setSegment(response.segment))
           resolve(response.segment)
@@ -102,7 +103,7 @@ export default function HomePage() {
     }))
     Promise.all(promiseArray)
       .then(([{ question, answer }, segment]) => {
-        axios.post(process.env.REACT_APP_API_URL + '/api/widgetbot-history', { chatbotIndex: widgetbotIndex, question, answer, segment, type: 'widgetbot' }).then(() => { }).catch(() => { })
+        axios.post(process.env.REACT_APP_API_URL + '/api/widgetbot-history', { chatbotIndex: widgetbotIndex, question, answer, segment, type: 'widgetbot', chatHistory: sendingMessages }).then(() => { }).catch(() => { })
       }).catch(err => { })
   }
 

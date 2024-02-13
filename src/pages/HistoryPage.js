@@ -57,6 +57,9 @@ function WidgetBotHistory() {
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                     Segment / Percentage / Rationale
                   </th>
+                  <th scope="col-2" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-pre text-wrap">
+                    Chat List
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
@@ -75,6 +78,9 @@ function WidgetBotHistory() {
                     <td className="px-3 py-5 text-sm text-gray-500 break-all whitespace-normal">
                       <span class="font-bold">{history.segment || 'Uncertain'}</span>/{history.percentage || 0}%<br />
                       {history.rationale || ""}<br />
+                    </td>
+                    <td className="px-3 py-5 text-sm text-gray-500 break-all whitespace-normal whitespace-pre text-wrap">
+                      {history.chatHistory || ""}
                     </td>
                   </tr>
                 ))}
