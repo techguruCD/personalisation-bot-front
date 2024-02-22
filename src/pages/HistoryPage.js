@@ -60,6 +60,9 @@ function WidgetBotHistory() {
                   <th scope="col-2" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-pre text-wrap">
                     Chat List
                   </th>
+                  <th scope="col-2" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-pre text-wrap">
+                    Detection Result
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
@@ -81,6 +84,9 @@ function WidgetBotHistory() {
                     </td>
                     <td className="px-3 py-5 text-sm text-gray-500 break-all whitespace-normal whitespace-pre text-wrap">
                       {history.chatHistory || ""}
+                    </td>
+                    <td className="px-3 py-5 text-sm text-gray-500 break-all whitespace-normal whitespace-pre text-wrap">
+                      {history.detection || ""}
                     </td>
                   </tr>
                 ))}

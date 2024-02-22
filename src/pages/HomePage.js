@@ -62,6 +62,23 @@ export default function HomePage() {
   const inputTextArea = useRef(null)
   const chatBoxRef = useRef(null)
 
+  const payloadChanged = (e) => {
+    inputTextArea.current.style.height = '1px';
+    inputTextArea.current.style.height = `${inputTextArea.current.scrollHeight}px`;
+    console.log(inputTextArea.current)
+    setPayload(e.target.value)
+    
+    
+    const textArea = inputTextArea.current;
+    const lineHeight = parseInt(window.getComputedStyle(textArea).lineHeight);
+    const cursorPosition = textArea.selectionStart;
+    const linesBeforeCursor = textArea.value.substr(0, cursorPosition).split("\n").length - 1;
+    const scrollPosition = linesBeforeCursor * lineHeight;
+
+    // Adjust the scroll position of the textarea
+    textArea.scrollTop = scrollPosition - textArea.offsetHeight / 2;
+  }
+
   const scrollToBottom = () => {
     if (chatBoxRef.current) {
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
@@ -96,14 +113,14 @@ export default function HomePage() {
       axios.post(process.env.REACT_APP_API_URL + '/api/detect-segment', { messages: sendingMessages })
         .then(({ data: response }) => {
           dispatch(setSegment(response.segment))
-          resolve(response.segment)
+          resolve({segment: response.segment, detection: response.detection})
         }).catch(err => {
           reject()
         })
     }))
     Promise.all(promiseArray)
-      .then(([{ question, answer }, segment]) => {
-        axios.post(process.env.REACT_APP_API_URL + '/api/widgetbot-history', { chatbotIndex: widgetbotIndex, question, answer, segment, type: 'widgetbot', chatHistory: sendingMessages }).then(() => { }).catch(() => { })
+      .then(([{ question, answer }, {segment, detection}]) => {
+        axios.post(process.env.REACT_APP_API_URL + '/api/widgetbot-history', { chatbotIndex: widgetbotIndex, question, answer, segment, type: 'widgetbot', chatHistory: sendingMessages, detection }).then(() => { }).catch(() => { })
       }).catch(err => { })
   }
 
@@ -154,7 +171,7 @@ export default function HomePage() {
         }
       </div>
       <div className='border-t flex p-6 items-end'>
-        <textarea value={payload} onKeyDown={handleKeyDown} ref={inputTextArea} onChange={(e) => setPayload(e.target.value)} placeholder='Type Your Questions here...' className='grow px-2 py-1 resize-none max-h-[90px] focus:outline-none focus-visible:outline-none' style={{ height: '32px' }} />
+        <textarea value={payload} onKeyDown={handleKeyDown} ref={inputTextArea} onChange={payloadChanged} placeholder='Type Your Questions here...' className='grow px-2 py-1 resize-none max-h-[70px] focus:outline-none focus-visible:outline-none' style={{ height: '32px' }} />
         <div onClick={handleSend} className='w-6 cursor-pointer'>
           <PaperAirplaneIcon />
         </div>
